@@ -1,16 +1,18 @@
-# Beatles Ranker
+# Today, Oh Boy!
 
-Build your personal Beatles hit parade by choosing between two songs and saying how much you prefer one. The interface takes its colour and theatrical spirit from *Sgt. Pepper*: warm paper, orange and teal, expressive typography, and a record collection to explore.
+Build your personal Beatles hit parade by choosing between two songs and saying how much you prefer one. The compact masthead keeps the comparison and live chart in focus. Warm paper, vermilion, deep green, gold, and an original floral parade collage take their theatrical spirit from *Sgt. Pepper*. The live chart highlights your number one and stays visible alongside the voting controls on desktop.
+
+A small banner identifies this as a fan project, independent of The Beatles, Apple Corps Ltd., and YouTube, with no affiliation or endorsement.
 
 ## Features
 
-- Rank **213 Beatles songs** from the core collection with six preference buttons, adaptive comparisons, a live chart, undo, skip, and confirmed reset.
-- Load either song into one shared **YouTube player**, then press its native play button. Loading or listening never records a vote.
+- Rank **213 Beatles songs** in a focused comparison view with six evenly weighted preference buttons, adaptive comparisons, a live top five, undo, skip, and confirmed reset.
+- Load either song into one shared **YouTube player**, then press its native play button. The player appears when you listen; loading or listening never records a vote.
 - Explore album covers, ordered track lists, release dates, songwriters, producers, and links to the stories on Beatles Bible.
-- Search the full ranking or album library. Enable **Include compilations & live releases** to browse the archive.
+- Switch between **Rank songs** and **Record collection**. Search the full ranking to see scores and comparison counts; songs without votes stay unranked. Enable **Include compilations & live releases** in the collection to browse the archive.
 - Resume votes and the active comparison through browser storage. The original 25 song IDs remain compatible with existing saves.
 
-Twelve sample comparisons are provided initially. Choose **Start fresh** for your own ranking. Ratings describe relative preferences; the progress bar counts songs involved in completed comparisons.
+Twelve sample comparisons are provided initially. Choose **Start my ranking** for your own ranking. Ratings describe relative preferences; the progress bar counts songs involved in completed comparisons. Song credits and source links are grouped under **About these songs**.
 
 ## Run locally
 
@@ -61,7 +63,7 @@ Switching songs replaces the iframe. Voting, skipping, undoing, resetting, or cl
 
 ```text
 src/data/             Catalog snapshot, typed adapters, and demo votes
-src/components/       Album library, cover/fallback artwork, YouTube player
+src/components/       Comparison, ranking, album library, artwork, YouTube player
 src/media/            Validated YouTube URL construction
 src/ranking/          Rating fitting and adaptive pair selection
 src/storage/          Versioned browser persistence and validation
@@ -72,9 +74,13 @@ tests/                Node test-runner suites
 
 Built with React, TypeScript, Vite, and Lucide icons. DM Sans and Fraunces load through Google Fonts with system fallbacks. Keep catalog IDs stable when correcting metadata. Preserve album positions, edition labels, source URLs, and version notes; run tests and build after catalog changes. Dense ranking histories use a bounded fitting step to maintain stability.
 
+The original masthead illustration is [public/art/pepper-parade.webp](public/art/pepper-parade.webp), generated with the built-in imagegen tool and compressed to WebP. Its generation prompt and provenance are recorded in [docs/artwork.md](docs/artwork.md). The site title, description, and floral record favicon use the Today, Oh Boy! identity. The existing browser-storage key remains stable so saved votes carry over.
+
 ## Verification and limits
 
 All **26 automated tests**, TypeScript checks, and the production build pass. Chrome checks covered song loading/switching, fallback links, player removal, voting, undo, skip, reload persistence, source facts, archive selection, album search, and desktop/390-pixel mobile layouts. Existing saved votes were preserved.
+
+The Today, Oh Boy! redesign was checked in an isolated Chrome session: all six preference buttons, refresh persistence, undo, skip, reset cancellation and confirmation, full-ranking search, the relocated Listen button, and desktop/390-pixel mobile comparison, chart, and collection layouts. The app console had no runtime errors before loading third-party media; YouTube produced blocked telemetry and permissions-policy messages in the test browser.
 
 **Live playback verified on `localhost`:** “A Day In The Life” and “Penny Lane” loaded and played in Chrome with native YouTube controls. The same “Penny Lane” embed failed from `127.0.0.1`, both with and without player parameters. The development and preview commands now default to the working hostname. This verifies those videos in this browser; availability of other videos and regions still depends on YouTube.
 
