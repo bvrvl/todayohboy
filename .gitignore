@@ -13,6 +13,7 @@ dist-ssr/
 coverage/
 playwright-report/
 test-results/
+.test-build/
 
 # Local environment configuration (keep example templates)
 .env
@@ -39,4 +40,3 @@ Thumbs.db
 #Agentic Development files
 AGENTS.md 
 PLAN.md
-

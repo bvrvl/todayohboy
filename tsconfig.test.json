@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "CommonJS",
+    "moduleResolution": "Node",
+    "strict": true,
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "outDir": ".test-build"
+  },
+  "include": [
+    "src/data/**/*.ts",
+    "src/ranking/**/*.ts",
+    "src/storage/**/*.ts",
+    "src/media/**/*.ts"
+  ]
+}
