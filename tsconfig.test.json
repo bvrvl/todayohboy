@@ -12,6 +12,7 @@
   "include": [
     "src/data/**/*.ts",
     "src/ranking/**/*.ts",
+    "src/community/**/*.ts",
     "src/storage/**/*.ts",
     "src/media/**/*.ts"
   ]

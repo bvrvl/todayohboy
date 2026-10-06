@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { ArrowRight, Check, Disc3, Info, Library, RotateCcw, SkipForward, Sparkles, Undo2, X } from 'lucide-react';
+import { ArrowRight, Check, Disc3, Info, Library, RotateCcw, SkipForward, Sparkles, Undo2, Users, X } from 'lucide-react';
 import { songs, songById, catalogSongById, totalPairs, type Song } from './data/songs';
 import { calculateRatings, pairKey, selectPair, type Pair, type Strength } from './ranking/model';
 import { loadProgress, saveProgress, type Progress } from './storage/progress';
@@ -7,8 +7,11 @@ import { AlbumLibrary } from './components/AlbumLibrary';
 import { Comparison } from './components/Comparison';
 import { Ranking } from './components/Ranking';
 import { YouTubePlayer } from './components/YouTubePlayer';
+import { Community } from './components/Community';
+import { createRankingSnapshot } from './community/posts';
+import { readSharedRanking } from './community/sharing';
 
-type View = 'rank' | 'collection';
+type View = 'rank' | 'collection' | 'community';
 
 export default function App() {
   const [initial] = useState(loadProgress);
@@ -18,15 +21,26 @@ export default function App() {
   const [skipped, setSkipped] = useState<string[]>([]);
   const [notice, setNotice] = useState('');
   const [dialog, setDialog] = useState<'help' | 'reset' | null>(null);
-  const [view, setView] = useState<View>('rank');
+  const [sharedRanking, setSharedRanking] = useState(() => readSharedRanking(window.location.hash));
+  const [view, setView] = useState<View>(() => window.location.hash.startsWith('#ranking=') ? 'community' : 'rank');
   const [rankingSession, setRankingSession] = useState(0);
   const [listeningId, setListeningId] = useState<string | null>(null);
   const transitionLock = useRef(false);
   const modalRef = useRef<HTMLDialogElement>(null);
   const modalTrigger = useRef<HTMLElement | null>(null);
   const ratings = useMemo(() => calculateRatings(songs, progress.history), [progress.history]);
+  const snapshot = useMemo(() => createRankingSnapshot(ratings, progress.history.length), [ratings, progress.history.length]);
   const activeSongs = progress.activePair?.map((id) => songById.get(id)!);
   const listeningSong = listeningId ? catalogSongById.get(listeningId) ?? null : null;
+
+  useEffect(() => {
+    function readLink(): void {
+      setSharedRanking(readSharedRanking(window.location.hash));
+      if (window.location.hash.startsWith('#ranking=')) { setView('community'); setListeningId(null); }
+    }
+    window.addEventListener('hashchange', readLink);
+    return () => window.removeEventListener('hashchange', readLink);
+  }, []);
 
   useEffect(() => {
     if (saveBlocked) return;
@@ -100,6 +114,11 @@ export default function App() {
     setView(nextView);
   }
 
+  function dismissShared(): void {
+    window.history.replaceState(null, '', `${window.location.pathname}${window.location.search}`);
+    setSharedRanking({ post: null, error: null });
+  }
+
   return <>
     <div className="top-stripe" aria-hidden="true" />
     <aside className="fan-banner" aria-label="Fan project notice"><p><strong>Fan project</strong> · Not affiliated with or endorsed by The Beatles, Apple Corps Ltd., or YouTube.</p></aside>
@@ -111,7 +130,7 @@ export default function App() {
 
       <main>
         <nav className="view-navigation" aria-label="Main navigation">
-          <div className="view-tabs"><button aria-pressed={view === 'rank'} aria-controls="rank-view" onClick={() => changeView('rank')}><Disc3 size={16} /> Rank songs</button><button aria-pressed={view === 'collection'} aria-controls="collection-view" onClick={() => changeView('collection')}><Library size={16} /> Record collection</button></div>
+          <div className="view-tabs"><button aria-pressed={view === 'rank'} aria-controls="rank-view" onClick={() => changeView('rank')}><Disc3 size={16} /> Rank songs</button><button aria-pressed={view === 'collection'} aria-controls="collection-view" onClick={() => changeView('collection')}><Library size={16} /> Record collection</button><button aria-pressed={view === 'community'} aria-controls="community-view" onClick={() => changeView('community')}><Users size={16} /> Community</button></div>
           <div className="navigation-meta"><span className="collection-count">{songs.length} songs <span aria-hidden="true">✦</span> 1962–1970</span><button className="nav-help" aria-label="How it works" onClick={() => setDialog('help')}><Info size={16} /> How it works</button></div>
         </nav>
 
@@ -128,13 +147,17 @@ export default function App() {
               <div className="comparison-tools"><button onClick={undo} disabled={!progress.history.length}><Undo2 size={16} /> Undo</button><span className="comparison-notice" role="status">{notice}</span><button onClick={skip} disabled={!progress.activePair}>Skip <SkipForward size={16} /></button></div>
               {view === 'rank' && <YouTubePlayer key={listeningId ?? 'empty'} song={listeningSong} onClose={() => setListeningId(null)} />}
             </section>
-            <Ranking key={rankingSession} ratings={ratings} comparisonCount={progress.history.length} demo={progress.demo} />
+            <Ranking key={rankingSession} ratings={ratings} comparisonCount={progress.history.length} demo={progress.demo} onPublish={() => changeView('community')} />
           </div>
         </div>
 
         <div id="collection-view" hidden={view !== 'collection'}>
           {view === 'collection' && <YouTubePlayer key={listeningId ?? 'empty'} song={listeningSong} context="collection" onClose={() => setListeningId(null)} />}
           <AlbumLibrary onListen={listen} />
+        </div>
+
+        <div id="community-view" hidden={view !== 'community'}>
+          <Community active={view === 'community'} ranking={snapshot} demo={progress.demo} sharedPost={sharedRanking.post} sharedError={sharedRanking.error} onDismissShared={dismissShared} onRank={() => changeView('rank')} />
         </div>
       </main>
 

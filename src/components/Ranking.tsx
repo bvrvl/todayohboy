@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ArrowLeft, ArrowRight, Search } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Search, Share2 } from 'lucide-react';
 import { albumById } from '../data/songs';
 import type { Rating } from '../ranking/model';
 import { AlbumArt } from './AlbumArt';
@@ -8,9 +8,10 @@ interface RankingProps {
   ratings: Rating[];
   comparisonCount: number;
   demo: boolean;
+  onPublish: () => void;
 }
 
-export function Ranking({ ratings, comparisonCount, demo }: RankingProps) {
+export function Ranking({ ratings, comparisonCount, demo, onPublish }: RankingProps) {
   const [expanded, setExpanded] = useState(false);
   const [query, setQuery] = useState('');
   const ranked = ratings.filter((rating) => rating.comparisonCount > 0);
@@ -42,6 +43,7 @@ export function Ranking({ ratings, comparisonCount, demo }: RankingProps) {
         <div className="progress-title"><span>Songs compared</span><span><strong>{ranked.length}</strong> / {ratings.length}</span></div>
         <div className="progress-bar" role="progressbar" aria-label="Songs encountered" aria-valuemin={0} aria-valuemax={ratings.length} aria-valuenow={ranked.length}><div style={{ width: `${ranked.length / ratings.length * 100}%` }} /></div>
         <p><strong data-testid="comparison-count">{comparisonCount}</strong> {comparisonCount === 1 ? 'vote' : 'votes'}{demo && <span>Sample votes</span>}</p>
+        <button className="ranking-publish text-button" onClick={onPublish}><Share2 size={14} /> Publish & share your progress <ArrowRight size={14} /></button>
       </div>
     </div>
   </aside>;

@@ -25,6 +25,7 @@ Built with **React, TypeScript, Vite, and plain CSS**. Runs entirely in the brow
 - **Explore your ranking.** See your top five, or search the full list by song or album. Songs you haven’t compared stay visibly unranked.
 - **Browse the records.** Explore original album covers, ordered track lists, release details, credits, and links to Beatles Bible. Include compilations and live releases to browse the wider archive.
 - **Pick up where you left off.** Votes and the current pair survive a refresh. Undo a vote, skip a pair, or start again with a confirmed reset.
+- **Publish and share your progress.** Open **Community**, add an optional name and one note, and publish a snapshot of your chart. Copy its link or use your device’s share menu.
 
 ## Quick start
 
@@ -60,6 +61,14 @@ The progress bar counts songs involved in completed comparisons. It measures cov
 ### Your progress
 
 Comparison history is saved in this browser’s `localStorage`. There are no accounts or cross-device sync. Clearing site data removes your save; **Reset progress** also clears it after confirmation. If storage cannot be read or written, the app displays a notice.
+
+### Community and sharing
+
+The initial Community section stores published charts on this device. Each post contains an optional note (up to 500 characters), a display name, the ordered list of compared songs, and the vote and coverage counts at publication. Start your own chart and cast at least one vote before publishing; the sample chart cannot be published. Later votes, undo, and **Reset progress** leave published snapshots intact.
+
+**Share ranking** uses the native share menu when available, otherwise copies a link. **Copy link** always copies the link, with a selectable field if clipboard access fails. Opening a link displays the complete snapshot and note without replacing the recipient’s progress. Links contain the snapshot in the URL fragment, so no backend is required; they remain readable independently of the publisher’s browser storage. A locally hosted link is only reachable on that computer. Serve the app at a public URL to share it with other people.
+
+There is no shared online feed, authentication, or verified identity yet. To add those later, implement the async `CommunityRepository` interface in [src/community/repository.ts](src/community/repository.ts) and replace its exported adapter. The UI already awaits `list()` and `publish()` and handles loading and failure. A backend should assign the authenticated author from its session and validate posts on the server. The [local adapter](src/storage/community.ts) keeps versioned community data separate from ranking history, validates existing saves before writing, and leaves unreadable data untouched. [Snapshot types and validation](src/community/posts.ts) and [share-link encoding](src/community/sharing.ts) are independent of React.
 
 ## How ranking works
 
@@ -130,6 +139,7 @@ This earlier generated illustration is retained at <a href="public/art/pepper-pa
 
 ```text
 src/
+  community/        Ranking snapshots, share links, and repository interface
   components/       Comparison, ranking, collection, artwork, and player
   data/             Catalog snapshot, typed adapters, and demo votes
   media/            YouTube URL validation and construction
@@ -153,7 +163,7 @@ npm run typecheck
 npm run build
 ```
 
-The tests cover preference direction and strength, transitivity, deterministic fitting, pair selection and exhaustion, persistence replay, undo, invalid saves, catalog integrity, and media URLs. For interaction changes, also check all six preference buttons, listening, refresh, undo, skip, and reset in a browser, including a narrow viewport.
+The tests cover preference direction and strength, transitivity, deterministic fitting, pair selection and exhaustion, persistence replay, undo, invalid saves, catalog integrity, media URLs, community persistence, snapshot order, Unicode share links, and malformed links. New community tests are colocated as `*.test.ts` and discovered after compilation by the Node runner. For interaction changes, also check all six preference buttons, listening, refresh, undo, skip, reset, publishing, and sharing in a browser, including a narrow viewport.
 
 ## Credits and notice
 
