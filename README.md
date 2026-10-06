@@ -20,7 +20,7 @@ Built with **React, TypeScript, Vite, and plain CSS**. Runs entirely in the brow
 
 ## What you can do
 
-- **Build your chart.** Choose “Slightly better,” “Better,” or “Much better” beneath either song. Adaptive comparisons introduce new songs and help refine close calls.
+- **Build your chart.** Select the song card you prefer, then choose “Slightly better,” “Better,” or “Much better” in the shared controls between the cards. The selected card and controls share a clear border colour. Adaptive comparisons introduce new songs and help refine close calls.
 - **Listen before choosing.** Open either song in the shared YouTube player. Listening never casts a vote.
 - **Explore your ranking.** See your top five, or search the full list by song or album. Songs you haven’t compared stay visibly unranked.
 - **Browse the records.** Explore original album covers, ordered track lists, release details, credits, and links to Beatles Bible. Include compilations and live releases to browse the wider archive.
@@ -52,7 +52,7 @@ The static production files are written to `dist/`. Serve them over HTTP or HTTP
 ## How to use it
 
 1. **Start your own chart.** A fresh browser opens with 12 sample votes. Choose **Start my ranking** to clear the sample and begin.
-2. **Compare the pair.** Pick a preference button beneath your favourite. Use **Listen**, then press play in the YouTube player if you need a reminder.
+2. **Compare the pair.** Select your favourite song card, then choose how much you prefer it using the three shared buttons. Selecting a card prepares your choice; pressing a strength button casts the vote. Use **Listen**, then press play in the YouTube player if you need a reminder. Listening does not select a favourite.
 3. **Keep going at your own pace.** Each vote updates the chart immediately. **Skip** leaves your ranking unchanged; **Undo** removes your latest vote.
 4. **Explore.** Choose **View full ranking** to search songs and inspect scores, or switch to **Record collection** to browse albums.
 
@@ -163,7 +163,7 @@ npm run typecheck
 npm run build
 ```
 
-The tests cover preference direction and strength, transitivity, deterministic fitting, pair selection and exhaustion, persistence replay, undo, invalid saves, catalog integrity, media URLs, community persistence, snapshot order, Unicode share links, and malformed links. New community tests are colocated as `*.test.ts` and discovered after compilation by the Node runner. For interaction changes, also check all six preference buttons, listening, refresh, undo, skip, reset, publishing, and sharing in a browser, including a narrow viewport.
+The tests cover preference direction and strength, transitivity, deterministic fitting, pair selection and exhaustion, persistence replay, undo, invalid saves, catalog integrity, media URLs, community persistence, snapshot order, Unicode share links, and malformed links. New community tests are colocated as `*.test.ts` and discovered after compilation by the Node runner. For interaction changes, also check all three preference strengths for both song selections, keyboard selection, listening, refresh, undo, skip, reset, publishing, and sharing in a browser, including a narrow viewport.
 
 ## Credits and notice
 
