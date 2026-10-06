@@ -1,12 +1,12 @@
-import { ChevronDown, Play } from 'lucide-react';
+import { Check, ChevronDown, Play } from 'lucide-react';
 import { albumById, type Song } from '../data/songs';
 import type { Strength } from '../ranking/model';
 import { AlbumArt } from './AlbumArt';
 
-const strengths: { value: Strength; label: string; level: number }[] = [
-  { value: 'slight', label: 'Slightly better', level: 1 },
-  { value: 'better', label: 'Better', level: 2 },
-  { value: 'much', label: 'Much better', level: 3 },
+const strengths: { value: Strength; label: string; hint: string }[] = [
+  { value: 'slight', label: 'Slightly better', hint: 'A close call' },
+  { value: 'better', label: 'Better', hint: 'My pick' },
+  { value: 'much', label: 'Much better', hint: 'Clear favourite' },
 ];
 
 interface ComparisonProps {
@@ -29,9 +29,9 @@ export function Comparison({ songs, listeningId, onListen, onAnswer }: Compariso
             <p>{song.album} <span>· {album.year}</span></p>
           </div>
           <div className="vote-buttons" role="group" aria-label={`Prefer ${song.title}`}>
-            {strengths.map(({ value, label, level }) => <button key={value} onClick={() => onAnswer(song.id, value)} aria-label={`${song.title}: ${label}`}>
-              <span>{label}</span>
-              <span className="strength-meter" aria-hidden="true">{[1, 2, 3].map((step) => <i key={step} className={step <= level ? 'filled' : ''} />)}</span>
+            {strengths.map(({ value, label, hint }) => <button key={value} onClick={() => onAnswer(song.id, value)} aria-label={`${song.title}: ${label}`}>
+              <span className="vote-copy"><strong>{label}</strong><small>{hint}</small></span>
+              <span className="vote-action" aria-hidden="true"><Check size={14} strokeWidth={2} /></span>
             </button>)}
           </div>
         </article>;

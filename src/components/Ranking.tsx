@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ArrowLeft, ArrowRight, Search, Share2 } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Disc3, Music2, Search, Share2 } from 'lucide-react';
 import { albumById } from '../data/songs';
 import type { Rating } from '../ranking/model';
 import { AlbumArt } from './AlbumArt';
@@ -23,12 +23,12 @@ export function Ranking({ ratings, comparisonCount, demo, onPublish }: RankingPr
   return <aside className="ranking-panel" aria-labelledby="ranking-title">
     <div className="ranking-heading">
       <div><span className="eyebrow">{demo ? 'SAMPLE RANKING' : 'YOUR RANKING'}</span><h2 id="ranking-title">The hit parade</h2></div>
-      <span className="chart-star" aria-hidden="true">✺</span>
+      <Disc3 className="chart-record" size={46} strokeWidth={1.25} aria-hidden="true" />
     </div>
     <div className="ranking-content">
       <div className="chart-label"><span>{expanded ? `ALL ${ratings.length} SONGS` : 'TOP FIVE'}</span><span>{expanded ? <abbr title="Relative preference scores, based on your votes">SCORE</abbr> : <><i className="live-dot" /> {demo ? 'DEMO' : 'LIVE'}</>}</span></div>
       {expanded && <label className="search-box"><Search size={16} /><input aria-label="Search songs" placeholder="Find a song or album…" value={query} onChange={(event) => setQuery(event.target.value)} /></label>}
-      {!expanded && !ranked.length && <div className="ranking-empty"><div className="empty-record" aria-hidden="true">✺</div><h3>Your next number one?</h3><p>Cast a vote to start your chart.</p></div>}
+      {!expanded && !ranked.length && <div className="ranking-empty"><div className="empty-record" aria-hidden="true"><span className="record-label"><Music2 size={19} strokeWidth={1.75} /></span></div><h3>Your next number one?</h3><p>Cast a vote to start your chart.</p></div>}
       <ol className={`ranking-list ${expanded ? 'expanded' : ''}`}>
         {visible.map((rating) => <li key={rating.song.id}>
           <span className="rank-number" aria-label={rating.comparisonCount ? `Rank ${ranked.indexOf(rating) + 1}` : 'Unranked'}>{rating.comparisonCount ? String(ranked.indexOf(rating) + 1).padStart(2, '0') : '—'}</span>
