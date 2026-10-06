@@ -29,7 +29,6 @@ export function Comparison({ songs, listeningId, onListen, onAnswer }: Compariso
             <p>{song.album} <span>· {album.year}</span></p>
           </div>
           <div className="vote-buttons" role="group" aria-label={`Prefer ${song.title}`}>
-            <span className="vote-label">I prefer this song…</span>
             {strengths.map(({ value, label, level }) => <button key={value} onClick={() => onAnswer(song.id, value)} aria-label={`${song.title}: ${label}`}>
               <span>{label}</span>
               <span className="strength-meter" aria-hidden="true">{[1, 2, 3].map((step) => <i key={step} className={step <= level ? 'filled' : ''} />)}</span>

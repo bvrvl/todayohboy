@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { ArrowRight, Check, Disc3, Heart, Info, Library, RotateCcw, SkipForward, Sparkles, Undo2, X } from 'lucide-react';
+import { ArrowRight, Check, Disc3, Info, Library, RotateCcw, SkipForward, Sparkles, Undo2, X } from 'lucide-react';
 import { songs, songById, catalogSongById, totalPairs, type Song } from './data/songs';
 import { calculateRatings, pairKey, selectPair, type Pair, type Strength } from './ranking/model';
 import { loadProgress, saveProgress, type Progress } from './storage/progress';
@@ -19,6 +19,7 @@ export default function App() {
   const [notice, setNotice] = useState('');
   const [dialog, setDialog] = useState<'help' | 'reset' | null>(null);
   const [view, setView] = useState<View>('rank');
+  const [rankingSession, setRankingSession] = useState(0);
   const [listeningId, setListeningId] = useState<string | null>(null);
   const transitionLock = useRef(false);
   const modalRef = useRef<HTMLDialogElement>(null);
@@ -51,7 +52,7 @@ export default function App() {
     const pair = progress.activePair;
     const history = [...progress.history, { id: crypto.randomUUID(), winnerId, loserId: pair.find((id) => id !== winnerId)!, strength }];
     setProgress({ ...progress, history, activePair: selectPair(songs, history, skipped) });
-    setNotice(`Vote for ${songById.get(winnerId)!.title} recorded.`);
+    setNotice(`Voted for ${songById.get(winnerId)!.title}`);
   }
 
   function skip(): void {
@@ -61,7 +62,7 @@ export default function App() {
     const nextSkipped = [...skipped, pairKey(progress.activePair)];
     setSkipped(nextSkipped);
     setProgress({ ...progress, activePair: selectPair(songs, progress.history, nextSkipped) });
-    setNotice('Pair skipped. No vote recorded.');
+    setNotice('Pair skipped');
   }
 
   function undo(): void {
@@ -72,7 +73,7 @@ export default function App() {
     const pair: Pair = [last.winnerId, last.loserId];
     setSkipped(skipped.filter((key) => key !== pairKey(pair)));
     setProgress({ ...progress, history: progress.history.slice(0, -1), activePair: pair });
-    setNotice('Last vote undone. Try that pair again.');
+    setNotice('Last vote undone');
   }
 
   function reset(): void {
@@ -82,7 +83,8 @@ export default function App() {
     setSaveBlocked(false);
     setProgress({ version: 1, history: [], activePair: selectPair(songs, []), demo: false });
     setView('rank');
-    setNotice('A fresh start. Choose your first favourite.');
+    setRankingSession((session) => session + 1);
+    setNotice('Ready for your first vote');
     setDialog(null);
     window.requestAnimationFrame(() => document.getElementById('compare')?.scrollIntoView({ block: 'start', behavior: 'auto' }));
   }
@@ -100,34 +102,33 @@ export default function App() {
 
   return <>
     <div className="top-stripe" aria-hidden="true" />
-    <aside className="fan-banner" aria-label="Fan project notice"><Heart size={12} aria-hidden="true" /><p><strong>A fan project, made for the love of the music.</strong> <span>Independent of The Beatles, Apple Corps Ltd., and YouTube; no affiliation or endorsement.</span></p></aside>
+    <aside className="fan-banner" aria-label="Fan project notice"><p><strong>Fan project</strong> · Not affiliated with or endorsed by The Beatles, Apple Corps Ltd., or YouTube.</p></aside>
     <div className="page-shell">
       <header className="site-header">
-        <a className="brand" href="#" onClick={() => changeView('rank')} aria-label="Today, Oh Boy! home"><span className="brand-seal" aria-hidden="true"><Disc3 size={26} strokeWidth={1.25} /></span><div><span className="brand-kicker">THE BEATLES, IN YOUR OWN ORDER</span><h1>Today, <em>Oh Boy!</em></h1><p>Two songs. One choice. Your very own hit parade.</p></div></a>
-        <img className="masthead-art" src="/art/pepper-parade.webp" alt="" aria-hidden="true" width="768" height="256" />
+        <a className="brand" href="#" onClick={() => changeView('rank')} aria-label="Today, Oh Boy! home"><span className="brand-seal" aria-hidden="true"><Disc3 size={30} strokeWidth={1.25} /></span><div><span className="brand-kicker">THE BEATLES. YOUR WAY.</span><h1>Today, <em>Oh Boy!</em></h1><p>A personal hit parade, one choice at a time.</p></div></a>
+        <img className="masthead-art" src="/art/record-shop.webp" alt="" aria-hidden="true" width="2172" height="724" />
       </header>
 
       <main>
         <nav className="view-navigation" aria-label="Main navigation">
           <div className="view-tabs"><button aria-pressed={view === 'rank'} aria-controls="rank-view" onClick={() => changeView('rank')}><Disc3 size={16} /> Rank songs</button><button aria-pressed={view === 'collection'} aria-controls="collection-view" onClick={() => changeView('collection')}><Library size={16} /> Record collection</button></div>
-          <div className="navigation-meta"><span className="collection-count">{songs.length} songs <span aria-hidden="true">✦</span> All you need is taste</span><button className="nav-help" onClick={() => setDialog('help')}><Info size={15} /> How it works</button></div>
+          <div className="navigation-meta"><span className="collection-count">{songs.length} songs <span aria-hidden="true">✦</span> 1962–1970</span><button className="nav-help" aria-label="How it works" onClick={() => setDialog('help')}><Info size={16} /> How it works</button></div>
         </nav>
 
         {storageError && <p className="storage-warning" role="alert">{storageError}</p>}
 
         <div id="rank-view" hidden={view !== 'rank'}>
-          {progress.demo && <div className="demo-notice"><p><span className="status-dot" /><strong>A little preview.</strong> You’re looking at sample votes.</p><button onClick={() => setDialog('reset')}>Start my ranking <ArrowRight size={15} /></button></div>}
+          {progress.demo && <div className="demo-notice"><p><span className="demo-badge">DEMO</span> A sample chart. Ready to make it yours?</p><button onClick={() => setDialog('reset')}>Start my ranking <ArrowRight size={15} /></button></div>}
           <div className="workspace">
             <section id="compare" className="comparison-panel" aria-labelledby="comparison-title">
-              <div className="panel-heading"><span className="eyebrow"><span aria-hidden="true">✦</span> THE LISTENING ROOM</span><span className="comparison-number">{activeSongs ? `No. ${String(progress.history.length + 1).padStart(3, '0')}` : progress.history.length === totalPairs ? 'Session complete' : 'Comparisons paused'}</span></div>
-              <h2 id="comparison-title">Which one’s your favourite?</h2>
-              <p className="comparison-hint">Pick a song. Say how much. Watch your chart take shape.</p>
-              {activeSongs ? <Comparison key={progress.activePair!.join(':')} songs={activeSongs} listeningId={listeningId} onListen={listen} onAnswer={answer} /> : <div className="empty-comparison"><Sparkles size={42} /><h3>{progress.history.length === totalPairs ? 'What a splendid hit parade.' : 'A brief intermission.'}</h3><p>{progress.history.length === totalPairs ? 'You’ve compared every pair. Your ranking is ready.' : 'More songs are waiting. Ready to bring back the remaining pairs?'}</p>{progress.history.length < totalPairs && <button className="primary-button" onClick={() => { setSkipped([]); setProgress({ ...progress, activePair: selectPair(songs, progress.history) }); setNotice('Skipped pairs are ready to compare.'); }}>Revisit skipped pairs <ArrowRight size={16} /></button>}</div>}
-              <div className="comparison-tools"><button onClick={undo} disabled={!progress.history.length}><Undo2 size={15} /> Undo last vote</button><button onClick={skip} disabled={!progress.activePair}>Skip this pair <SkipForward size={15} /></button></div>
-              <p className="comparison-notice" role="status">{notice || 'Follow your ears. There are no wrong answers.'}</p>
+              <div className="panel-heading"><span className="eyebrow"><span aria-hidden="true">✦</span> THE LISTENING ROOM</span><span className="comparison-number">{activeSongs ? `PAIR ${String(progress.history.length + 1).padStart(3, '0')}` : progress.history.length === totalPairs ? 'Complete' : 'Paused'}</span></div>
+              <h2 id="comparison-title">Which do you prefer?</h2>
+              <p className="comparison-hint">Choose a song, then how much.</p>
+              {activeSongs ? <Comparison key={progress.activePair!.join(':')} songs={activeSongs} listeningId={listeningId} onListen={listen} onAnswer={answer} /> : <div className="empty-comparison"><Sparkles size={42} /><h3>{progress.history.length === totalPairs ? 'Your chart is complete.' : 'All remaining pairs are skipped.'}</h3><p>{progress.history.length === totalPairs ? 'You’ve compared every pair.' : 'Bring them back when you’re ready.'}</p>{progress.history.length < totalPairs && <button className="primary-button" onClick={() => { setSkipped([]); setProgress({ ...progress, activePair: selectPair(songs, progress.history) }); setNotice('Skipped pairs restored'); }}>Revisit skipped pairs <ArrowRight size={16} /></button>}</div>}
+              <div className="comparison-tools"><button onClick={undo} disabled={!progress.history.length}><Undo2 size={16} /> Undo</button><span className="comparison-notice" role="status">{notice}</span><button onClick={skip} disabled={!progress.activePair}>Skip <SkipForward size={16} /></button></div>
               {view === 'rank' && <YouTubePlayer key={listeningId ?? 'empty'} song={listeningSong} onClose={() => setListeningId(null)} />}
             </section>
-            <Ranking ratings={ratings} comparisonCount={progress.history.length} demo={progress.demo} />
+            <Ranking key={rankingSession} ratings={ratings} comparisonCount={progress.history.length} demo={progress.demo} />
           </div>
         </div>
 
@@ -137,11 +138,11 @@ export default function App() {
         </div>
       </main>
 
-      <footer><span>FOR THE LOVE OF THE MUSIC <Heart size={12} /></span><span className="save-state">{storageError ? <Info size={14} /> : <Check size={14} />}{storageError ? 'Progress not saved' : 'Saved on this device'}</span><button onClick={() => setDialog('reset')}><RotateCcw size={14} /> Reset progress</button></footer>
+      <footer><span className="fan-credit">An independent fan project <span aria-hidden="true">✦</span></span><span className="save-state">{storageError ? <Info size={14} /> : <Check size={14} />}{storageError ? 'Progress not saved' : 'Saved on this device'}</span><button onClick={() => setDialog('reset')}><RotateCcw size={14} /> Reset progress</button></footer>
     </div>
     <dialog ref={modalRef} onCancel={(event) => { event.preventDefault(); setDialog(null); }} onClick={(event) => { if (event.target === event.currentTarget) setDialog(null); }} aria-labelledby="dialog-title">
-      <div className="modal-content"><button className="modal-close" aria-label="Close dialog" onClick={() => setDialog(null)}><X size={20} /></button><span className="eyebrow">{dialog === 'reset' ? 'A FRESH START' : 'A LITTLE HELP'}</span><h2 id="dialog-title">{dialog === 'reset' ? 'A brand new hit parade?' : 'Let your favourites find you.'}</h2>
-        {dialog === 'reset' ? <><p>This clears all votes, including sample votes, and starts your own ranking. Your current progress will be replaced.</p><div className="modal-actions"><button className="secondary-button" onClick={() => setDialog(null)}>Keep my progress</button><button className="primary-button" onClick={reset}>Start my ranking <ArrowRight size={16} /></button></div></> : <><p>Choose a button under the song you prefer. “Slightly better” is a close call; “Much better” means a clear favourite.</p><ol className="how-list"><li><strong>Listen if you like.</strong> Load either song, then press play in the YouTube player. Listening never records a vote.</li><li><strong>See your chart take shape.</strong> Every choice updates your ranking. Open the full ranking to search songs and see their scores. Songs you haven’t compared stay unranked.</li><li><strong>Go at your own pace.</strong> Skip unfamiliar pairs, undo your last vote, or come back later. Your choices save in this browser.</li></ol><p className="modal-note">{progress.demo ? 'You’re exploring a sample ranking. Choose “Start my ranking” to begin with your own votes. ' : ''}The record collection has album stories and track lists to explore.</p><button className="primary-button" onClick={() => { changeView('rank'); setDialog(null); }}>Let’s compare <ArrowRight size={16} /></button></>}
+      <div className="modal-content"><button className="modal-close" aria-label="Close dialog" onClick={() => setDialog(null)}><X size={20} /></button><span className="eyebrow">{dialog === 'reset' ? 'A FRESH START' : 'HOW IT WORKS'}</span><h2 id="dialog-title">{dialog === 'reset' ? 'Start a new ranking?' : 'Two songs. Your call.'}</h2>
+        {dialog === 'reset' ? <><p>{progress.demo ? 'Clear the sample votes and start with your own choices.' : 'This clears your votes and starts again. Your current ranking will be lost.'}</p><div className="modal-actions"><button className="secondary-button" onClick={() => setDialog(null)}>Cancel</button><button className="primary-button" onClick={reset}>{progress.demo ? 'Start my ranking' : 'Reset ranking'} <ArrowRight size={16} /></button></div></> : <><p>Use a button beneath your favourite. “Slightly better” is a close call; “Much better” is a clear favourite.</p><ol className="how-list"><li><strong>Need a listen?</strong> Select Listen, then press play in the YouTube player.</li><li><strong>Your votes build your chart.</strong> The full ranking includes scores and songs you haven’t compared.</li><li><strong>Take your time.</strong> Skip a pair or undo a vote. Progress saves on this device.</li></ol>{progress.demo && <p className="modal-note">This is a sample chart. Choose “Start my ranking” to begin your own.</p>}<button className="primary-button" onClick={() => { changeView('rank'); setDialog(null); }}>Let’s compare <ArrowRight size={16} /></button></>}
       </div>
     </dialog>
   </>;

@@ -26,12 +26,11 @@ export function SleeveArt({ art, mini = false }: { art: ArtStyle; mini?: boolean
       <path d="M36 253 Q21 178 74 110 M267 250 Q288 166 232 100" fill="none" stroke={gold} strokeWidth="4" />
       {[52, 93, 137, 192, 243].map((y, i) => <Flower key={y} x={i % 2 ? 259 : 45} y={y} size={i % 2 ? .85 : 1} color={i % 2 ? '#f1a9b7' : accent} />)}
       <Flower x={250} y={67} color={gold} /><Flower x={56} y={229} color="#ea94ad" />
-      <circle cx="150" cy="158" r="91" fill={gold} stroke="#102f31" strokeWidth="5" />
-      <circle cx="150" cy="158" r="82" fill="#f6ead0" stroke={accent} strokeWidth="3" />
-      <path d="M81 129 Q150 78 219 129 M86 196 Q150 232 214 196" fill="none" stroke={bg} strokeWidth="2" />
-      <text x="150" y="137" textAnchor="middle" fill={bg} fontFamily="Georgia" fontWeight="bold" fontSize="24">LONELY</text>
-      <text x="150" y="167" textAnchor="middle" fill={bg} fontFamily="Georgia" fontWeight="bold" fontSize="30">HEARTS</text>
-      <text x="150" y="190" textAnchor="middle" fill={bg} fontFamily="Georgia" fontSize="18" letterSpacing="5">CLUB</text>
+      <circle cx="150" cy="158" r="84" fill={bg} stroke={gold} strokeWidth="2" />
+      {Array.from({ length: 12 }, (_, i) => <ellipse key={i} cx="150" cy="119" rx="15" ry="38" fill={i % 2 ? '#efbb89' : '#e68a78'} stroke={gold} strokeWidth="1" transform={`rotate(${i * 30} 150 158)`} />)}
+      <circle cx="150" cy="158" r="29" fill={gold} />
+      <circle cx="150" cy="158" r="20" fill={bg} />
+      <path d="M137 158 Q150 145 163 158 M140 168 Q150 174 160 168" fill="none" stroke={gold} strokeWidth="2" strokeLinecap="round" />
       <Flower x={150} y={43} size={.75} color={accent} /><Flower x={150} y={265} color={accent} size={.65} />
     </> : art === 'strawberry' ? <>
       {Array.from({ length: 8 }, (_, i) => <circle key={i} cx="150" cy="150" r={140 - i * 16} fill="none" stroke={i % 2 ? gold : '#e9a4b2'} strokeWidth="8" />)}
@@ -51,8 +50,10 @@ export function SleeveArt({ art, mini = false }: { art: ArtStyle; mini?: boolean
     </> : art === 'road' ? <>
       <circle cx="230" cy="57" r="30" fill={gold} />
       {Array.from({ length: 7 }, (_, i) => <path key={i} d={`M${i * 55 - 20} 0 Q${i * 55 + 55} 100 ${i * 55 - 20} 210`} fill="none" stroke={accent} strokeWidth="23" />)}
-      <path d="M0 201 L300 178 V300 H0Z" fill="#173d3d" />
-      {Array.from({ length: 5 }, (_, i) => <path key={i} d={`M${i * 78 - 55} 226 l35 -2 58 76 h-55Z`} fill="#eee5c7" />)}
+      <path d="M0 210 Q80 172 160 215 T300 190 V300 H0Z" fill="#173d3d" />
+      <path d="M0 268 Q60 225 126 258 T300 225" fill="none" stroke={gold} strokeWidth="8" />
+      <path d="M0 288 Q64 245 130 278 T300 245" fill="none" stroke="#80a8a2" strokeWidth="5" />
+      <Flower x={71} y={208} color={gold} />
     </> : <>
       {Array.from({ length: 11 }, (_, i) => <ellipse key={i} cx="150" cy="150" rx={138 - i * 11} ry={120 - i * 8} fill="none" stroke={i % 2 ? accent : gold} strokeWidth="6" transform={`rotate(${i * 16} 150 150)`} />)}
       <Flower x={150} y={150} size={2} color={gold} />
