@@ -56,13 +56,14 @@ svg { flex-shrink: 0; }
 .demo-badge { padding: 4px 6px; color: #795e31; background: #eadeb9; border-radius: 3px; font-size: 8px; letter-spacing: 1px; font-weight: 700; }
 .demo-notice button { display: flex; align-items: center; gap: 8px; padding: 5px 0; background: none; border: 0; font-weight: 600; font-size: 12px; color: var(--orange); }
 .demo-notice button:hover { color: var(--teal); }
-.workspace { display: grid; grid-template-columns: minmax(0, 1.8fr) minmax(340px, 1fr); gap: 28px; align-items: start; }
-.comparison-panel { border: 1px solid #cfc5ad; border-radius: 8px; background: #fcf8ed; padding: 22px 28px 12px; box-shadow: 0 4px 0 #e1d6bd; min-width: 0; }
+.workspace { display: grid; grid-template-columns: minmax(0, 2.6fr) minmax(300px, 1fr); gap: 28px; align-items: start; }
+.comparison-panel { border: 1px solid #cfc5ad; border-top: 3px solid var(--orange); border-radius: 8px; background: #fcf8ed; padding: 22px 28px 12px; box-shadow: 0 4px 0 #e1d6bd, 0 10px 28px #604a2610; min-width: 0; }
 .panel-heading { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
 .panel-heading .eyebrow { display: flex; align-items: center; gap: 7px; color: var(--orange); }
 .panel-heading .eyebrow > span { font-size: 15px; line-height: 1; }
 .comparison-number { color: var(--muted); font-size: 9px; letter-spacing: 1px; font-variant-numeric: tabular-nums; }
 h2 { font-size: 33px; font-weight: 600; letter-spacing: -1px; line-height: 1.25; margin-top: 11px; }
+#comparison-title { font-size: clamp(32px, 3.2vw, 42px); }
 .comparison-hint { color: var(--muted); font-size: 12px; line-height: 1.6; margin: 6px 0 19px; }
 .song-pair { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 18px; position: relative; animation: arrive .25s ease; }
 .song-card { min-width: 0; position: relative; display: flex; flex-direction: column; padding: 16px 16px 42px; border: 2px solid #d0bca4; border-radius: 8px; background: #f6ead9; --song-accent: var(--orange); cursor: pointer; transition: border-color .18s, box-shadow .18s; }
@@ -78,11 +79,11 @@ h2 { font-size: 33px; font-weight: 600; letter-spacing: -1px; line-height: 1.25;
 .song-choice-mark { display: grid; place-items: center; width: 18px; height: 18px; border: 1px solid var(--song-accent); border-radius: 50%; }
 .is-chosen .song-choice-mark { background: var(--song-accent); color: #fff8e4; }
 .chosen-label { font-size: 7px; letter-spacing: .8px; }
-.sleeve { width: 100%; max-width: 210px; align-self: center; aspect-ratio: 1; box-shadow: 3px 4px 0 #d5cdb6; border: 1px solid #c3baa4; overflow: hidden; }
+.sleeve { width: 100%; max-width: 260px; align-self: center; aspect-ratio: 1; box-shadow: 3px 4px 0 #d5cdb6; border: 1px solid #c3baa4; overflow: hidden; }
 .sleeve-art, .album-cover { display: block; width: 100%; height: 100%; }
 .album-cover { object-fit: contain; background: #f5f0e3; }
 .song-caption { padding: 17px 1px 4px; min-height: 78px; flex: 1; }
-.song-caption h3 { font-size: 25px; line-height: 1.2; letter-spacing: -.65px; }
+.song-caption h3 { font-size: 28px; line-height: 1.2; letter-spacing: -.65px; }
 .song-caption p { font-size: 10px; line-height: 1.6; margin-top: 7px; color: var(--muted); }
 .song-caption p span { white-space: nowrap; }
 .song-caption h3, .album-tile strong, .album-detail h3, .song-facts dd, .album-tracks strong { overflow-wrap: anywhere; }
@@ -118,24 +119,23 @@ h2 { font-size: 33px; font-weight: 600; letter-spacing: -1px; line-height: 1.25;
 .comparison-tools button { display: flex; align-items: center; justify-content: center; gap: 7px; padding: 12px 0; min-height: 44px; background: none; border: 0; font-size: 12px; font-weight: 500; flex-shrink: 0; }
 .comparison-tools button:hover:not(:disabled) { color: var(--orange); }
 .comparison-notice { line-height: 1.4; font-size: 10px; color: var(--muted); text-align: center; overflow-wrap: anywhere; }
-.ranking-panel { position: sticky; top: 24px; border: 1px solid var(--teal); border-radius: 8px; overflow: hidden; box-shadow: 0 4px 0 #e1d6bd; background: #faf6e9; }
-.ranking-heading { background: var(--teal); color: var(--paper); padding: 26px; display: flex; align-items: center; justify-content: space-between; gap: 8px; position: relative; }
-.ranking-heading::after { content: ''; position: absolute; inset: 7px; border: 1px solid #ddbc6740; pointer-events: none; border-radius: 3px; }
-.ranking-heading .eyebrow { color: #e0d4af; font-size: 8px; letter-spacing: 2px; }
-.ranking-heading h2 { font-size: 34px; margin-top: 6px; letter-spacing: -1.3px; }
-.chart-record { color: var(--gold); }
+.ranking-panel { position: sticky; top: 24px; border: 1px solid #c9cbb7; border-radius: 8px; overflow: hidden; background: #faf6e9; }
+.ranking-heading { background: #e9ecde; color: var(--ink); border-bottom: 1px solid #c9cbb7; padding: 20px; display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.ranking-heading .eyebrow { color: var(--muted); font-size: 8px; letter-spacing: 2px; }
+.ranking-heading h2 { font-size: 26px; margin-top: 6px; letter-spacing: -.8px; }
+.chart-record { color: #7b8d77; width: 28px; height: 28px; }
 .ranking-heading-copy { flex: 1; min-width: 0; }
 .ranking-name { display: flex; align-items: center; gap: 8px; }
 .ranking-name h2 { overflow-wrap: anywhere; }
-.edit-ranking-name { display: grid; place-items: center; flex-shrink: 0; width: 36px; height: 36px; margin-top: 6px; padding: 0; border: 1px solid #e0d4af66; border-radius: 50%; background: transparent; color: var(--gold); }
-.edit-ranking-name:hover { background: #ffffff18; border-color: var(--gold); }
+.edit-ranking-name { display: grid; place-items: center; flex-shrink: 0; width: 36px; height: 36px; margin-top: 6px; padding: 0; border: 1px solid #b9c5a9; border-radius: 50%; background: transparent; color: var(--teal); }
+.edit-ranking-name:hover { background: #fcf8ed; border-color: var(--teal); }
 .ranking-name-form { margin-top: 16px; }
 .ranking-name-form label { display: block; margin-bottom: 7px; font-size: 11px; }
 .ranking-name-form input { width: 100%; min-width: 0; padding: 10px; font: inherit; font-size: 14px; color: var(--ink); background: #fcf8ed; border: 1px solid var(--gold); border-radius: 4px; }
 .ranking-name-form > div { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; }
-.ranking-name-form button { display: flex; align-items: center; gap: 5px; padding: 9px 10px; min-height: 36px; border: 1px solid #e0d4af66; border-radius: 4px; background: transparent; color: var(--paper); font-size: 11px; }
+.ranking-name-form button { display: flex; align-items: center; gap: 5px; padding: 9px 10px; min-height: 36px; border: 1px solid #b9c5a9; border-radius: 4px; background: transparent; color: var(--ink); font-size: 11px; }
 .ranking-name-form button[type='submit'] { color: var(--ink); background: var(--gold); border-color: var(--gold); }
-.ranking-name-form p { font-size: 11px; line-height: 1.5; margin-top: 8px; color: #ffe3a3; }
+.ranking-name-form p { font-size: 11px; line-height: 1.5; margin-top: 8px; color: var(--orange); }
 .ranking-kind { display: flex; gap: 4px; padding: 4px; margin-bottom: 18px; background: #ece8d6; border: 1px solid var(--line); border-radius: 5px; }
 .ranking-kind button { flex: 1; display: flex; align-items: center; justify-content: center; gap: 7px; padding: 9px; min-height: 36px; border: 1px solid transparent; border-radius: 3px; background: transparent; font-size: 12px; color: var(--muted); }
 .ranking-kind button[aria-pressed='true'] { background: #fcf8ed; color: var(--teal); border-color: #c5c6ac; box-shadow: 0 1px 2px #28453910; }
@@ -337,7 +337,7 @@ dialog::backdrop { background: #173c3877; backdrop-filter: blur(4px); }
   .site-header { height: 120px; }
   .brand h1 { font-size: 43px; }
   .masthead-art { width: 660px; right: -65px; mask-image: linear-gradient(to right, transparent 22%, #000 58%); }
-  .workspace { grid-template-columns: minmax(0, 1.65fr) minmax(310px, 1fr); gap: 22px; }
+  .workspace { grid-template-columns: minmax(0, 2.3fr) minmax(290px, 1fr); gap: 22px; }
   .comparison-panel { padding: 23px 21px 10px; }
   .song-pair { gap: 16px; }
   .song-card { padding: 12px 12px 38px; }
@@ -345,8 +345,8 @@ dialog::backdrop { background: #173c3877; backdrop-filter: blur(4px); }
   .song-caption { min-height: 85px; }
   .chosen-label { display: none; }
   .vote-tray { width: calc(100% - 24px); padding: 12px; }
-  .ranking-heading { padding: 25px 22px; }
-  .ranking-heading h2 { font-size: 30px; }
+  .ranking-heading { padding: 20px; }
+  .ranking-heading h2 { font-size: 24px; }
   .ranking-content { padding: 20px 20px 0; }
   .ranking-list li { gap: 9px; }
   .ranking-list:not(.expanded) li:first-child .mini-sleeve { width: 45px; height: 45px; }
@@ -370,8 +370,8 @@ dialog::backdrop { background: #173c3877; backdrop-filter: blur(4px); }
   .song-caption h3 { font-size: 26px; }
   .sleeve { max-width: 230px; }
   .ranking-panel { position: static; }
-  .ranking-heading { padding: 25px 27px; }
-  .ranking-heading h2 { font-size: 34px; }
+  .ranking-heading { padding: 22px 27px; }
+  .ranking-heading h2 { font-size: 27px; }
   .ranking-content { padding: 22px 27px 0; }
   .rank-song strong { font-size: 14px; }
   .rank-song small { font-size: 10px; }
@@ -414,6 +414,7 @@ dialog::backdrop { background: #173c3877; backdrop-filter: blur(4px); }
   .panel-heading .eyebrow { font-size: 7px; letter-spacing: 1.5px; }
   .comparison-number { font-size: 8px; }
   h2 { font-size: 29px; margin-top: 12px; }
+  #comparison-title { font-size: 29px; }
   .comparison-hint { font-size: 11px; margin-bottom: 19px; }
   .song-pair { gap: 12px; }
   .song-card { padding: 10px 9px 32px; }
@@ -438,8 +439,8 @@ dialog::backdrop { background: #173c3877; backdrop-filter: blur(4px); }
   .comparison-tools button { font-size: 11px; }
   .comparison-notice { font-size: 9px; }
   .song-details-grid { grid-template-columns: 1fr; gap: 18px; }
-  .ranking-heading { padding: 24px; }
-  .ranking-heading h2 { font-size: 33px; }
+  .ranking-heading { padding: 20px 22px; }
+  .ranking-heading h2 { font-size: 25px; }
   .ranking-content { padding: 20px 22px 0; }
   .rank-song strong { font-size: 13px; }
   .rank-song small { font-size: 9px; }
