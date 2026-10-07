@@ -124,6 +124,23 @@ h2 { font-size: 33px; font-weight: 600; letter-spacing: -1px; line-height: 1.25;
 .ranking-heading .eyebrow { color: #e0d4af; font-size: 8px; letter-spacing: 2px; }
 .ranking-heading h2 { font-size: 34px; margin-top: 6px; letter-spacing: -1.3px; }
 .chart-record { color: var(--gold); }
+.ranking-heading-copy { flex: 1; min-width: 0; }
+.ranking-name { display: flex; align-items: center; gap: 8px; }
+.ranking-name h2 { overflow-wrap: anywhere; }
+.edit-ranking-name { display: grid; place-items: center; flex-shrink: 0; width: 36px; height: 36px; margin-top: 6px; padding: 0; border: 1px solid #e0d4af66; border-radius: 50%; background: transparent; color: var(--gold); }
+.edit-ranking-name:hover { background: #ffffff18; border-color: var(--gold); }
+.ranking-name-form { margin-top: 16px; }
+.ranking-name-form label { display: block; margin-bottom: 7px; font-size: 11px; }
+.ranking-name-form input { width: 100%; min-width: 0; padding: 10px; font: inherit; font-size: 14px; color: var(--ink); background: #fcf8ed; border: 1px solid var(--gold); border-radius: 4px; }
+.ranking-name-form > div { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; }
+.ranking-name-form button { display: flex; align-items: center; gap: 5px; padding: 9px 10px; min-height: 36px; border: 1px solid #e0d4af66; border-radius: 4px; background: transparent; color: var(--paper); font-size: 11px; }
+.ranking-name-form button[type='submit'] { color: var(--ink); background: var(--gold); border-color: var(--gold); }
+.ranking-name-form p { font-size: 11px; line-height: 1.5; margin-top: 8px; color: #ffe3a3; }
+.ranking-kind { display: flex; gap: 4px; padding: 4px; margin-bottom: 18px; background: #ece8d6; border: 1px solid var(--line); border-radius: 5px; }
+.ranking-kind button { flex: 1; display: flex; align-items: center; justify-content: center; gap: 7px; padding: 9px; min-height: 36px; border: 1px solid transparent; border-radius: 3px; background: transparent; font-size: 12px; color: var(--muted); }
+.ranking-kind button[aria-pressed='true'] { background: #fcf8ed; color: var(--teal); border-color: #c5c6ac; box-shadow: 0 1px 2px #28453910; }
+.album-rating-note { font-size: 11px; line-height: 1.6; color: var(--muted); margin-bottom: 16px; }
+.post-chart-name { font-size: 22px; margin: 16px 0; overflow-wrap: anywhere; }
 .ranking-content { padding: 21px 24px 0; }
 .chart-label { font-size: 9px; font-weight: 700; letter-spacing: 1.5px; display: flex; justify-content: space-between; gap: 10px; color: var(--muted); margin-bottom: 12px; }
 .chart-label > span:last-child { display: flex; align-items: center; gap: 6px; letter-spacing: 1px; }

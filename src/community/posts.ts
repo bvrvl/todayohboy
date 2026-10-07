@@ -1,10 +1,12 @@
 import { songs, songById, totalPairs } from '../data/songs';
 import type { Rating } from '../ranking/model';
+import { validateRankingName } from '../data/rankingNames';
 
 export const NAME_LIMIT = 40;
 export const NOTE_LIMIT = 500;
 
 export interface RankingSnapshot {
+  name?: string;
   songIds: string[];
   comparisonCount: number;
   totalSongs: number;
@@ -27,8 +29,9 @@ export interface PublishRankingInput {
 
 // Capture only compared songs, in the same order as the live chart. A post is
 // a point-in-time copy; later votes, undo, and reset do not change it.
-export function createRankingSnapshot(ratings: Rating[], comparisonCount: number): RankingSnapshot {
+export function createRankingSnapshot(ratings: Rating[], comparisonCount: number, name?: string): RankingSnapshot {
   return {
+    ...(name === undefined ? {} : { name: validateRankingName(name) }),
     songIds: ratings.filter((rating) => rating.comparisonCount > 0).map((rating) => rating.song.id),
     comparisonCount,
     totalSongs: ratings.length,
@@ -44,6 +47,7 @@ export function parseRankingPost(value: unknown): RankingPost {
     || typeof post.createdAt !== 'string' || post.createdAt.length > 30 || !Number.isFinite(Date.parse(post.createdAt))
     || !post.ranking || typeof post.ranking !== 'object') throw new Error('Invalid ranking post.');
   const ranking = post.ranking as Record<string, unknown>;
+  const name = ranking.name === undefined ? undefined : validateRankingName(ranking.name);
   if (!Array.isArray(ranking.songIds) || ranking.songIds.length < 2 || ranking.songIds.length > songs.length
     || !ranking.songIds.every((id) => typeof id === 'string' && songById.has(id))
     || new Set(ranking.songIds).size !== ranking.songIds.length
@@ -60,6 +64,6 @@ export function parseRankingPost(value: unknown): RankingPost {
     author: post.author.trim(),
     note: post.note.trim(),
     createdAt: post.createdAt,
-    ranking: { songIds: [...ranking.songIds], comparisonCount: ranking.comparisonCount as number, totalSongs: ranking.totalSongs as number },
+    ranking: { ...(name === undefined ? {} : { name }), songIds: [...ranking.songIds], comparisonCount: ranking.comparisonCount as number, totalSongs: ranking.totalSongs as number },
   };
 }

@@ -27,15 +27,16 @@ test('rejects invalid or already-answered active pairs', () => {
   }
 });
 test('supports a fresh session and a completed session', () => {
-  const fresh = { version: 1, history: [], activePair: null, demo: false };
+  const fresh = { version: 1, history: [], activePair: null, demo: false, rankingName: 'My favourites' };
   assert.deepEqual(parseProgress(JSON.stringify(fresh)), fresh);
 });
 test('save and reload preserve votes', () => {
   const data = new Map();
   global.localStorage = { getItem: (key) => data.get(key) ?? null, setItem: (key, value) => data.set(key, value) };
-  saveProgress(createDemo());
+  const original = createDemo();
+  saveProgress(original);
   assert.ok(data.has(STORAGE_KEY));
-  assert.deepEqual(loadProgress(), { progress: createDemo(), error: null });
+  assert.deepEqual(loadProgress(), { progress: original, error: null });
 });
 test('bad saved data stays untouched and reports an error', () => {
   const setItem = mock.fn();

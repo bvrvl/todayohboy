@@ -22,7 +22,8 @@ Built with **React, TypeScript, Vite, and plain CSS**. Runs entirely in the brow
 
 - **Build your chart.** Select the song card you prefer, then choose “Slightly better,” “Better,” or “Much better” in the shared controls between the cards. The selected card and controls share a clear border colour. Adaptive comparisons introduce new songs and help refine close calls.
 - **Listen before choosing.** Open either song in the shared YouTube player. Listening never casts a vote.
-- **Explore your ranking.** See your top five, or search the full list by song or album. Songs you haven’t compared stay visibly unranked.
+- **Explore your ranking.** See your top five, or search the full list by song or album. Switch between **Songs** and **Albums** to see how your choices rate each record. Songs and albums you haven’t compared stay visibly unranked.
+- **Name your chart.** Each device gets one of ten Beatles-inspired names. Use the pencil beside the title to change it; save with Enter or **Save name**, and cancel with Escape or **Cancel**. Names survive refresh and reset and are included in published snapshots.
 - **Browse the records.** Explore original album covers, ordered track lists, release details, credits, and links to Beatles Bible. Include compilations and live releases to browse the wider archive.
 - **Pick up where you left off.** Votes and the current pair survive a refresh. Undo a vote, skip a pair, or start again with a confirmed reset.
 - **Publish and share your progress.** Open **Community**, add an optional name and one note, and publish a snapshot of your chart. Copy its link or use your device’s share menu.
@@ -82,7 +83,15 @@ The ranking uses a **Bradley–Terry-style logistic model**. Preference strength
 
 Ratings are fitted again from the complete comparison history after each vote or undo. History is the source of truth; scores are derived, relative values rather than points awarded for a win.
 
-The pair selector excludes answered pairs, prioritises introducing unseen songs, then favours nearby ratings and songs with fewer comparisons. Skipped pairs are set aside for the session and can be revisited. Early rankings are provisional, especially while much of the catalog is still unseen.
+The pair selector excludes answered pairs and introduces unseen songs from a window of the next five songs in a researched familiarity order. Once there are votes, it connects new songs to compared anchors, then favours nearby ratings and songs with fewer comparisons. Skipped pairs are set aside for the session and can be revisited. Early rankings are provisional, especially while much of the catalog is still unseen.
+
+The [50-song introduction order](src/data/familiarity.ts), researched **7 October 2026**, starts with the [Official Charts UK streaming Top 40 (2023)](https://www.officialcharts.com/chart-news/the-official-top-40-most-streamed-the-beatles-songs-in-the-uk-revealed/) and adds ten other favourites from [Kworb’s Spotify track-stream table, updated 5 October 2026](https://kworb.net/spotify/artist/3WrFJ7ztbogyGnTHbHJFl2_songs.html). Streaming popularity is a practical proxy for recognition, not an objective measure of fame. This is a curated, static introduction list, not a live global popularity chart. Mixes of the same song map to the existing stable song ID. Familiarity controls suggestions and the unranked list only; all personal ratings still start at zero and come entirely from votes.
+
+### Album rankings
+
+The **Albums** switch ranks the 14 core releases, including *Magical Mystery Tour* and *Past Masters*. Compared songs receive a chart-position score from 100 for the highest to 0 for the lowest; tied songs share their average position. An album’s score is the mean of these scores for its compared tracks. Uncompared tracks contribute no score, repeated appearances within a record count once, and George Martin score pieces are excluded. A song appearing on two core records contributes to both. This averages track positions rather than totals, so longer albums do not get an automatic advantage.
+
+Each row shows **compared / total songs**, with incomplete albums labelled **Provisional**. Albums with no compared tracks are unranked. Scores update from the same comparison history after every vote, undo, or reset; no separate album votes or stored album scores are needed.
 
 Implementation: [ranking model and pair selector](src/ranking/model.ts) · [progress validation and persistence](src/storage/progress.ts).
 

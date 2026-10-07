@@ -29,7 +29,7 @@ export default function App() {
   const modalRef = useRef<HTMLDialogElement>(null);
   const modalTrigger = useRef<HTMLElement | null>(null);
   const ratings = useMemo(() => calculateRatings(songs, progress.history), [progress.history]);
-  const snapshot = useMemo(() => createRankingSnapshot(ratings, progress.history.length), [ratings, progress.history.length]);
+  const snapshot = useMemo(() => createRankingSnapshot(ratings, progress.history.length, progress.rankingName), [ratings, progress.history.length, progress.rankingName]);
   const activeSongs = progress.activePair?.map((id) => songById.get(id)!);
   const listeningSong = listeningId ? catalogSongById.get(listeningId) ?? null : null;
 
@@ -95,7 +95,7 @@ export default function App() {
     transitionLock.current = false;
     setSkipped([]);
     setSaveBlocked(false);
-    setProgress({ version: 1, history: [], activePair: selectPair(songs, []), demo: false });
+    setProgress({ ...progress, history: [], activePair: selectPair(songs, []), demo: false });
     setView('rank');
     setRankingSession((session) => session + 1);
     setNotice('Ready for your first vote');
@@ -147,7 +147,7 @@ export default function App() {
               <div className="comparison-tools"><button onClick={undo} disabled={!progress.history.length}><Undo2 size={16} /> Undo</button><span className="comparison-notice" role="status">{notice}</span><button onClick={skip} disabled={!progress.activePair}>Skip <SkipForward size={16} /></button></div>
               {view === 'rank' && <YouTubePlayer key={listeningId ?? 'empty'} song={listeningSong} onClose={() => setListeningId(null)} />}
             </section>
-            <Ranking key={rankingSession} ratings={ratings} comparisonCount={progress.history.length} demo={progress.demo} onPublish={() => changeView('community')} />
+            <Ranking key={rankingSession} ratings={ratings} comparisonCount={progress.history.length} demo={progress.demo} rankingName={progress.rankingName} onRename={(rankingName) => setProgress({ ...progress, rankingName })} onPublish={() => changeView('community')} />
           </div>
         </div>
 

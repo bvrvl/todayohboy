@@ -1,4 +1,5 @@
 import type { Song } from '../data/songs';
+import { compareFamiliarity } from '../data/familiarity';
 
 export type Strength = 'slight' | 'better' | 'much';
 export type Pair = [string, string];
@@ -55,8 +56,10 @@ export function calculateRatings(catalog: Song[], history: Comparison[]): Rating
 
 export function selectPair(catalog: Song[], history: Comparison[], skipped: string[] = [], random = Math.random): Pair | null {
   const excluded = new Set([...history.map((c) => pairKey([c.winnerId, c.loserId])), ...skipped]);
-  const ratings = calculateRatings(catalog, history);
+  const ratings = calculateRatings(catalog, history).sort((a, b) => compareFamiliarity(a.song, b.song));
   const unseen = ratings.some((r) => r.comparisonCount === 0);
+  const introductionIds = new Set(ratings.filter((r) => r.comparisonCount === 0).slice(0, 5).map((r) => r.song.id));
+  const comparedIds = new Set(ratings.filter((r) => r.comparisonCount > 0).map((r) => r.song.id));
   const candidates: { pair: Pair; score: number }[] = [];
   for (let a = 0; a < ratings.length; a++) {
     for (let b = a + 1; b < ratings.length; b++) {
@@ -72,9 +75,14 @@ export function selectPair(catalog: Song[], history: Comparison[], skipped: stri
       candidates.push({ pair, score });
     }
   }
-  candidates.sort((a, b) => b.score - a.score);
   if (!candidates.length) return null;
-  const top = candidates.filter((c) => c.score >= candidates[0].score - 0.4).slice(0, 8);
+  // Introduce the next handful of familiar songs, linking them to existing
+  // evidence. If skips exhaust this pool, fall back to all eligible pairs.
+  const introduction = unseen ? candidates.filter(({ pair }) => pair.some((id) => introductionIds.has(id))
+    && pair.every((id) => comparedIds.has(id) || introductionIds.has(id))) : [];
+  const eligible = introduction.length ? introduction : candidates;
+  eligible.sort((a, b) => b.score - a.score);
+  const top = eligible.filter((c) => c.score >= eligible[0].score - 0.4).slice(0, 8);
   const pair = top[Math.min(top.length - 1, Math.floor(random() * top.length))].pair;
   return random() < 0.5 ? pair : [pair[1], pair[0]];
 }

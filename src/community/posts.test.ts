@@ -29,6 +29,13 @@ test('share links roundtrip the complete snapshot, Unicode, and line breaks', ()
   assert.deepEqual(readSharedRanking(new URL(url).hash), { post: validPost, error: null });
 });
 
+test('custom chart names survive published snapshots and share links', () => {
+  const named = parseRankingPost({ ...post, ranking: { ...ranking, name: 'My favourites 🎸' } });
+  const url = createShareUrl(named, 'https://example.com/');
+  assert.equal(readSharedRanking(new URL(url).hash).post?.ranking.name, 'My favourites 🎸');
+  for (const name of ['', 123, 'x'.repeat(61)]) assert.throws(() => parseRankingPost({ ...post, ranking: { ...ranking, name } }));
+});
+
 test('the full catalog fits in a validated share link', () => {
   const fullPost = parseRankingPost({ ...post, note: '🎸'.repeat(250), ranking: { songIds: songs.map((song) => song.id), comparisonCount: 213, totalSongs: songs.length } });
   const url = createShareUrl(fullPost, 'https://example.com/');

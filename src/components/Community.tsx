@@ -74,6 +74,7 @@ function RankingPostCard({ post, shared = false }: { post: RankingPost; shared?:
   return <article className={`ranking-post${shared ? ' shared-post' : ''}`} aria-label={`Ranking by ${post.author}`}>
     <header className="post-heading"><span className="fan-avatar" aria-hidden="true">{Array.from(post.author)[0].toUpperCase()}</span><div><h3>{post.author}</h3><time dateTime={post.createdAt}>{date.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })} · {date.toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' })}</time></div><span className="post-badge">{shared ? 'SHARED CHART' : 'PUBLISHED'}</span></header>
     {post.note && <p className="post-note">{post.note}</p>}
+    {post.ranking.name && <h4 className="post-chart-name">{post.ranking.name}</h4>}
     <div className="snapshot-meta"><span>{post.ranking.comparisonCount} {post.ranking.comparisonCount === 1 ? 'vote' : 'votes'}</span><span>{post.ranking.songIds.length} / {post.ranking.totalSongs} songs compared</span></div>
     <SnapshotSongs songIds={expanded ? post.ranking.songIds : post.ranking.songIds.slice(0, 5)} />
     {post.ranking.songIds.length > 5 && <button className="snapshot-expand text-button" aria-expanded={expanded} onClick={() => setExpanded(!expanded)}>{expanded ? 'Back to top five' : `View all ${post.ranking.songIds.length} ranked songs`} <ArrowRight size={14} /></button>}

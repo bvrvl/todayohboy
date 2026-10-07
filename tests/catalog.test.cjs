@@ -54,7 +54,9 @@ test('legacy saved votes and pair IDs survive the catalog expansion', () => {
   const ids = ['day-in-life', 'strawberry', 'here-comes-sun', 'something', 'in-my-life', 'while-guitar', 'hey-jude', 'yesterday', 'come-together', 'let-it-be', 'eleanor', 'blackbird', 'penny-lane', 'lucy', 'help', 'all-you-need', 'norwegian', 'tomorrow', 'ticket', 'across', 'oh-darling', 'all-my-loving', 'twist', 'hard-days-night', 'get-back'];
   ids.forEach((id) => assert.ok(songById.has(id), id));
   const state = { version: 1, demo: false, history: [{ id: 'old-vote', winnerId: 'hey-jude', loserId: 'yesterday', strength: 'much' }], activePair: ['norwegian', 'get-back'] };
-  assert.deepEqual(parseProgress(JSON.stringify(state)), state);
+  const { rankingName, ...restored } = parseProgress(JSON.stringify(state));
+  assert.ok(rankingName);
+  assert.deepEqual(restored, state);
 });
 
 test('YouTube URLs retain native controls and never autoplay', () => {

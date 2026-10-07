@@ -1,5 +1,6 @@
 import { songs } from '../data/songs';
 import { demoHistory } from '../data/demo';
+import { chooseRankingName, validateRankingName } from '../data/rankingNames';
 import { pairKey, type Comparison, type Pair } from '../ranking/model';
 
 export const STORAGE_KEY = 'beatles-ranker-progress-v1';
@@ -8,8 +9,9 @@ export interface Progress {
   history: Comparison[];
   activePair: Pair | null;
   demo: boolean;
+  rankingName: string;
 }
-export const createDemo = (): Progress => ({ version: 1, history: [...demoHistory], activePair: ['day-in-life', 'strawberry'], demo: true });
+export const createDemo = (): Progress => ({ version: 1, history: [...demoHistory], activePair: ['here-comes-sun', 'hey-jude'], demo: true, rankingName: chooseRankingName() });
 
 export function parseProgress(raw: string): Progress {
   const value = JSON.parse(raw);
@@ -28,7 +30,9 @@ export function parseProgress(raw: string): Progress {
   if (value.activePair !== null && (!Array.isArray(value.activePair) || value.activePair.length !== 2
     || !value.activePair.every((id: string) => ids.has(id)) || value.activePair[0] === value.activePair[1]
     || keys.has(pairKey(value.activePair)))) throw new Error('Invalid active comparison.');
-  return value as Progress;
+  // Existing v1 saves receive a name without losing votes or their active pair.
+  const rankingName = value.rankingName === undefined ? chooseRankingName() : validateRankingName(value.rankingName);
+  return { version: 1, history: value.history, activePair: value.activePair, demo: value.demo, rankingName };
 }
 export function loadProgress(): { progress: Progress; error: string | null } {
   try {
