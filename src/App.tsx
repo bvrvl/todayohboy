@@ -124,7 +124,7 @@ export default function App() {
     <aside className="fan-banner" aria-label="Fan project notice"><p><strong>Fan project</strong> · Not affiliated with or endorsed by The Beatles, Apple Corps Ltd., or YouTube.</p></aside>
     <div className="page-shell">
       <header className="site-header">
-        <a className="brand" href="#" onClick={() => changeView('rank')} aria-label="Today, Oh Boy! home"><span className="brand-seal" aria-hidden="true"><Disc3 size={30} strokeWidth={1.25} /></span><div><span className="brand-kicker">THE BEATLES. YOUR WAY.</span><h1>Today, <em>Oh Boy!</em></h1><p>A personal hit parade, one choice at a time.</p></div></a>
+        <a className="brand" href="#" onClick={() => changeView('rank')} aria-label="Today, Oh Boy! home"><span className="brand-seal" aria-hidden="true"><Disc3 size={30} strokeWidth={1.25} /></span><div><span className="brand-kicker">RANKING THEM. YOUR WAY.</span><h1>Today, <em>Oh Boy!</em></h1><p>All you need is taste.</p></div></a>
         <img className="masthead-art" src="/art/record-shop.webp" alt="" aria-hidden="true" width="2172" height="724" />
       </header>
 
