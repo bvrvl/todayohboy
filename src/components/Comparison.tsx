@@ -35,7 +35,7 @@ export function Comparison({ songs, listeningId, onListen, onAnswer }: Compariso
             <div className="sleeve"><AlbumArt key={album.id} album={album} /></div>
             <div className="song-caption">
               <h3 id={`song-${song.id}`}>{song.title}</h3>
-              <p>{song.album} <span>· {album.year}</span></p>
+              <p>{song.album} <span title="Song’s first release year">· {song.year}</span></p>
             </div>
           </label>
         </article>;

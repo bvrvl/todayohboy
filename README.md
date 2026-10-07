@@ -22,7 +22,7 @@ Built with **React, TypeScript, Vite, and plain CSS**. Runs entirely in the brow
 
 - **Build your chart.** Select the song card you prefer, then choose “Slightly better,” “Better,” or “Much better” in the shared controls between the cards. The selected card and controls share a clear border colour. Adaptive comparisons introduce new songs and help refine close calls.
 - **Listen before choosing.** Open either song in the shared YouTube player. Listening never casts a vote.
-- **Explore your ranking.** See your top five, or search the full list by song or album. Switch between **Songs** and **Albums** to see how your choices rate each record. Songs and albums you haven’t compared stay visibly unranked.
+- **Explore your ranking.** Scroll through your top 12 rated songs or albums, then choose **View more** to search the full list. Switch between **Songs** and **Albums** to see how your choices rate each record. Songs and albums you haven’t compared stay visibly unranked.
 - **Name your chart.** Each device gets one of ten Beatles-inspired names. Use the pencil beside the title to change it; save with Enter or **Save name**, and cancel with Escape or **Cancel**. Names survive refresh and reset and are included in published snapshots.
 - **Browse the records.** Explore original album covers, ordered track lists, release details, credits, and links to Beatles Bible. Include compilations and live releases to browse the wider archive.
 - **Pick up where you left off.** Votes and the current pair survive a refresh. Undo a vote, skip a pair, or start again with a confirmed reset.
@@ -55,7 +55,7 @@ The static production files are written to `dist/`. Serve them over HTTP or HTTP
 1. **Start your own chart.** A fresh browser opens with 12 sample votes. Choose **Start my ranking** to clear the sample and begin.
 2. **Compare the pair.** Select your favourite song card, then choose how much you prefer it using the three shared buttons. Selecting a card prepares your choice; pressing a strength button casts the vote. Use **Listen**, then press play in the YouTube player if you need a reminder. Listening does not select a favourite.
 3. **Keep going at your own pace.** Each vote updates the chart immediately. **Skip** leaves your ranking unchanged; **Undo** removes your latest vote.
-4. **Explore.** Choose **View full ranking** to search songs and inspect scores, or switch to **Record collection** to browse albums.
+4. **Explore.** The chart shows up to 12 rated entries in a scrollable list. Choose **View more** to search all songs or albums and inspect scores, or switch to **Record collection** to browse albums.
 
 The progress bar counts songs involved in completed comparisons. It measures coverage, rather than confidence in your ranking. You can stop whenever the chart feels useful.
 
@@ -83,7 +83,9 @@ The ranking uses a **Bradley–Terry-style logistic model**. Preference strength
 
 Ratings are fitted again from the complete comparison history after each vote or undo. History is the source of truth; scores are derived, relative values rather than points awarded for a win.
 
-The pair selector excludes answered pairs and introduces unseen songs from a window of the next five songs in a researched familiarity order. Once there are votes, it connects new songs to compared anchors, then favours nearby ratings and songs with fewer comparisons. Skipped pairs are set aside for the session and can be revisited. Early rankings are provisional, especially while much of the catalog is still unseen.
+The fitter uses damped Newton steps and a convergence check, so histories dominated by one anchor song receive the same mathematical fit as dense comparisons. Early charts remain provisional: incomplete or disconnected evidence cannot establish a reliable global order, and inconsistent choices are balanced by the model. Changing the fitter can adjust scores in existing saves; the original votes and active comparison remain intact.
+
+The pair selector excludes answered pairs and introduces unseen songs from a window of the next five songs in a researched familiarity order. Once there are votes, it connects new songs to compared anchors, then favours nearby ratings and songs with fewer comparisons. If skips block every anchor connection in the introduction window, it looks farther down the catalog for an available anchor connection. Skipped pairs are set aside for the session and can be revisited. Early rankings are provisional, especially while much of the catalog is still unseen.
 
 The [50-song introduction order](src/data/familiarity.ts), researched **7 October 2026**, starts with the [Official Charts UK streaming Top 40 (2023)](https://www.officialcharts.com/chart-news/the-official-top-40-most-streamed-the-beatles-songs-in-the-uk-revealed/) and adds ten other favourites from [Kworb’s Spotify track-stream table, updated 5 October 2026](https://kworb.net/spotify/artist/3WrFJ7ztbogyGnTHbHJFl2_songs.html). Streaming popularity is a practical proxy for recognition, not an objective measure of fame. This is a curated, static introduction list, not a live global popularity chart. Mixes of the same song map to the existing stable song ID. Familiarity controls suggestions and the unranked list only; all personal ratings still start at zero and come entirely from votes.
 
@@ -107,6 +109,8 @@ The checked-in [catalog](src/data/catalog.json) is a snapshot researched on **6 
 | Film score | Seven George Martin pieces available in the collection, outside the song ranking |
 
 Archive listings preserve alternate takes, mixes, live performances, and speech. These appearances do not become separate ranked songs. Red/Blue track lists use the expanded 2023 editions; *Love* groups transitions with preceding tracks and includes the listed iTunes bonuses.
+
+The [7 October catalog and ranking audit](docs/ranking-audit.md) checks the 14 core track lists and all 220 primary song/score designations. Primary albums follow the canonical core collection: non-album singles use *Past Masters*, and 1967 singles included on the eleven-track *Magical Mystery Tour* LP use that record. Song cards show the song’s first release year; the record collection shows each album’s release year.
 
 YouTube video IDs come from embeds on Beatles Bible’s song pages. The player keeps native controls, starts only when you press play, and stops when you switch songs, close it, or change the comparison. **Open on YouTube** provides a fallback when an embed cannot play. Videos may differ from a particular album mix, and availability depends on YouTube and your region.
 

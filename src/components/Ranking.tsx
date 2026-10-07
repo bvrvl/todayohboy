@@ -28,10 +28,10 @@ export function Ranking({ ratings, comparisonCount, demo, rankingName, onRename,
   const lineup = [...ranked, ...ratings.filter((rating) => rating.comparisonCount === 0).sort((a, b) => compareFamiliarity(a.song, b.song))];
   const albumRatings = useMemo(() => calculateAlbumRatings(albums.filter((album) => album.scope === 'core'), ratings), [ratings]);
   const rankedAlbums = albumRatings.filter((rating) => rating.score !== null);
-  const visibleAlbums = expanded ? albumRatings.filter((rating) => rating.album.title.toLowerCase().includes(query.toLowerCase())) : rankedAlbums.slice(0, 5);
+  const visibleAlbums = expanded ? albumRatings.filter((rating) => rating.album.title.toLowerCase().includes(query.toLowerCase())) : rankedAlbums.slice(0, 12);
   const visible = expanded
     ? lineup.filter((rating) => `${rating.song.title} ${rating.song.album}`.toLowerCase().includes(query.toLowerCase()))
-    : ranked.slice(0, 5);
+    : ranked.slice(0, 12);
 
   function finishEditing(): void {
     setEditing(false);
@@ -58,10 +58,10 @@ export function Ranking({ ratings, comparisonCount, demo, rankingName, onRename,
     <div className="ranking-content">
       <div className="ranking-kind" aria-label="Ranking type"><button aria-pressed={kind === 'songs'} onClick={() => { setKind('songs'); setQuery(''); }}><Music2 size={14} /> Songs</button><button aria-pressed={kind === 'albums'} onClick={() => { setKind('albums'); setQuery(''); }}><Disc3 size={14} /> Albums</button></div>
       {kind === 'albums' && <p className="album-rating-note">Album scores average your compared songs’ chart positions, out of 100. More compared tracks give a fuller picture.</p>}
-      <div className="chart-label"><span>{expanded ? `ALL ${kind === 'songs' ? ratings.length : albumRatings.length} ${kind.toUpperCase()}` : 'TOP FIVE'}</span><span>{kind === 'albums' ? <abbr title="Average chart position: top song = 100, bottom = 0. Uncompared tracks are excluded.">/ 100</abbr> : expanded ? <abbr title="Relative preference scores, based on your votes">SCORE</abbr> : <><i className="live-dot" /> {demo ? 'DEMO' : 'LIVE'}</>}</span></div>
+      <div className="chart-label"><span>{expanded ? `ALL ${kind === 'songs' ? ratings.length : albumRatings.length} ${kind.toUpperCase()}` : 'TOP 12'}</span><span>{kind === 'albums' ? <abbr title="Average chart position: top song = 100, bottom = 0. Uncompared tracks are excluded.">/ 100</abbr> : expanded ? <abbr title="Relative preference scores, based on your votes">SCORE</abbr> : <><i className="live-dot" /> {demo ? 'DEMO' : 'LIVE'}</>}</span></div>
       {expanded && <label className="search-box"><Search size={16} /><input aria-label={`Search ${kind}`} placeholder={kind === 'songs' ? 'Find a song or album…' : 'Find an album…'} value={query} onChange={(event) => setQuery(event.target.value)} /></label>}
       {!expanded && !(kind === 'songs' ? ranked.length : rankedAlbums.length) && <div className="ranking-empty"><div className="empty-record" aria-hidden="true"><span className="record-label"><Music2 size={19} strokeWidth={1.75} /></span></div><h3>Your next number one?</h3><p>Cast a vote to start your {kind === 'songs' ? 'chart' : 'album chart'}.</p></div>}
-      <ol className={`ranking-list ${expanded ? 'expanded' : ''}`} aria-label={`${kind === 'songs' ? 'Song' : 'Album'} ranking`}>
+      <ol className={`ranking-list personal-ranking-list ${expanded ? 'expanded' : ''}`} tabIndex={0} aria-label={`${kind === 'songs' ? 'Song' : 'Album'} ranking`}>
         {kind === 'albums' ? visibleAlbums.map((rating) => <li key={rating.album.id}>
           <span className="rank-number" aria-label={rating.score !== null ? `Rank ${rankedAlbums.indexOf(rating) + 1}` : 'Unranked'}>{rating.score !== null ? String(rankedAlbums.indexOf(rating) + 1).padStart(2, '0') : '—'}</span>
           <div className="mini-sleeve"><AlbumArt key={rating.album.id} album={rating.album} mini /></div>
@@ -76,7 +76,7 @@ export function Ranking({ ratings, comparisonCount, demo, rankingName, onRename,
         </li>)}
       </ol>
       {expanded && !(kind === 'songs' ? visible.length : visibleAlbums.length) && <p className="no-results">No {kind} found. Try another {kind === 'songs' ? 'title or album' : 'album'}.</p>}
-      <button className="view-ranking" aria-expanded={expanded} onClick={() => { setExpanded(!expanded); setQuery(''); }}>{expanded ? <><ArrowLeft size={15} /> Back to top five</> : <>View full ranking <ArrowRight size={15} /></>}</button>
+      <button className="view-ranking" aria-expanded={expanded} onClick={() => { setExpanded(!expanded); setQuery(''); }}>{expanded ? <><ArrowLeft size={15} /> Back to top 12</> : <>View more <ArrowRight size={15} /></>}</button>
       <div className="progress-section">
         <div className="progress-title"><span>Songs compared</span><span><strong>{ranked.length}</strong> / {ratings.length}</span></div>
         <div className="progress-bar" role="progressbar" aria-label="Songs encountered" aria-valuemin={0} aria-valuemax={ratings.length} aria-valuenow={ranked.length}><div style={{ width: `${ranked.length / ratings.length * 100}%` }} /></div>

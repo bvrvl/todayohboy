@@ -181,6 +181,9 @@ h2 { font-size: 33px; font-weight: 600; letter-spacing: -1px; line-height: 1.25;
 .search-box input { border: 0; background: transparent; width: 100%; min-width: 0; font: inherit; font-size: 13px; color: var(--ink); }
 .search-box:focus-within { border-color: var(--teal); }
 .ranking-list.expanded { max-height: 366px; overflow: auto; margin-top: 8px; scrollbar-color: #acb69d #f4efdf; scrollbar-width: thin; padding-right: 6px; }
+.personal-ranking-list { max-height: 366px; overflow-y: auto; overscroll-behavior-y: contain; scrollbar-color: #acb69d #f4efdf; scrollbar-width: thin; padding: 0 10px; margin: 0 -10px; }
+.personal-ranking-list:focus-visible { outline: 3px solid #a74673; outline-offset: 4px; }
+.personal-ranking-list.expanded { padding-right: 10px; }
 .no-results { font-size: 12px; padding: 20px 0; color: var(--muted); }
 .empty-comparison { min-height: 390px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; gap: 20px; }
 .empty-comparison > svg { color: var(--orange); }

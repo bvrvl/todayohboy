@@ -1,5 +1,6 @@
 import type { Song } from '../data/songs';
 import { compareFamiliarity } from '../data/familiarity';
+import { fitRatings, type Observation } from './fitRatings';
 
 export type Strength = 'slight' | 'better' | 'much';
 export type Pair = [string, string];
@@ -17,41 +18,32 @@ export interface Rating {
 }
 export const modelConfig = {
   targets: { slight: 0.65, better: 0.8, much: 0.95 },
-  passes: 240,
-  learningRate: 0.15,
+  maxIterations: 30,
+  gradientTolerance: 1e-8,
   regularization: 0.025,
 };
 export const pairKey = (pair: Pair): string => [...pair].sort().join(':');
 
 export function calculateRatings(catalog: Song[], history: Comparison[]): Rating[] {
-  const values = new Map(catalog.map((s) => [s.id, 0]));
-  const counts = new Map(catalog.map((s) => [s.id, 0]));
+  const indices = new Map(catalog.map((song, index) => [song.id, index]));
+  const counts = new Uint32Array(catalog.length);
+  const observations: Observation[] = [];
   for (const c of history) {
-    counts.set(c.winnerId, (counts.get(c.winnerId) ?? 0) + 1);
-    counts.set(c.loserId, (counts.get(c.loserId) ?? 0) + 1);
+    const winner = indices.get(c.winnerId);
+    const loser = indices.get(c.loserId);
+    if (winner === undefined || loser === undefined || winner === loser) continue;
+    counts[winner]++;
+    counts[loser]++;
+    observations.push({ winner, loser, target: modelConfig.targets[c.strength] });
   }
-  // Large catalogs can have hundreds of observations per song. Bound the step
-  // by degree so dense histories do not make the gradient updates oscillate.
-  const maxCount = Math.max(1, ...counts.values());
-  const learningRate = Math.min(modelConfig.learningRate, 1 / maxCount);
-  for (let pass = 0; pass < modelConfig.passes; pass++) {
-    const gradients = new Map(catalog.map((s) => [s.id, -modelConfig.regularization * values.get(s.id)!]));
-    for (const c of history) {
-      if (!values.has(c.winnerId) || !values.has(c.loserId)) continue;
-      const gap = values.get(c.winnerId)! - values.get(c.loserId)!;
-      const error = modelConfig.targets[c.strength] - 1 / (1 + Math.exp(-gap));
-      gradients.set(c.winnerId, gradients.get(c.winnerId)! + error);
-      gradients.set(c.loserId, gradients.get(c.loserId)! - error);
-    }
-    for (const song of catalog) values.set(song.id, values.get(song.id)! + learningRate * gradients.get(song.id)!);
-  }
-  const mean = catalog.length ? [...values.values()].reduce((a, b) => a + b, 0) / catalog.length : 0;
-  return catalog.map((song) => ({
+  const values = fitRatings(catalog.length, observations, modelConfig);
+  const mean = catalog.length ? values.reduce((a, b) => a + b, 0) / catalog.length : 0;
+  return catalog.map((song, index) => ({
     song,
-    rating: values.get(song.id)! - mean,
-    comparisonCount: counts.get(song.id)!,
-    uncertainty: 1 / Math.sqrt(1 + counts.get(song.id)!),
-  })).sort((a, b) => b.rating - a.rating || a.song.title.localeCompare(b.song.title));
+    rating: values[index] - mean,
+    comparisonCount: counts[index],
+    uncertainty: 1 / Math.sqrt(1 + counts[index]),
+  })).sort((a, b) => Math.abs(a.rating - b.rating) > 1e-10 ? b.rating - a.rating : a.song.title.localeCompare(b.song.title));
 }
 
 export function selectPair(catalog: Song[], history: Comparison[], skipped: string[] = [], random = Math.random): Pair | null {
@@ -80,7 +72,10 @@ export function selectPair(catalog: Song[], history: Comparison[], skipped: stri
   // evidence. If skips exhaust this pool, fall back to all eligible pairs.
   const introduction = unseen ? candidates.filter(({ pair }) => pair.some((id) => introductionIds.has(id))
     && pair.every((id) => comparedIds.has(id) || introductionIds.has(id))) : [];
-  const eligible = introduction.length ? introduction : candidates;
+  const connectsToCompared = ({ pair }: { pair: Pair }): boolean => unseen && comparedIds.has(pair[0]) !== comparedIds.has(pair[1]);
+  const connectedIntroduction = introduction.filter(connectsToCompared);
+  const connectedCandidates = candidates.filter(connectsToCompared);
+  const eligible = connectedIntroduction.length ? connectedIntroduction : connectedCandidates.length ? connectedCandidates : introduction.length ? introduction : candidates;
   eligible.sort((a, b) => b.score - a.score);
   const top = eligible.filter((c) => c.score >= eligible[0].score - 0.4).slice(0, 8);
   const pair = top[Math.min(top.length - 1, Math.floor(random() * top.length))].pair;
